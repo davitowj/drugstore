@@ -1,5 +1,6 @@
 import Express from "express"
-import MedicineRoute from "./router/medicineRouter"
+import medicineRoute from "./router/medicineRouter"
+import adminRoute from "./router/adminRoute"
 
 const app = Express()
 
@@ -7,9 +8,12 @@ const app = Express()
 app.use(Express.json())
 
 // Prefix for medicine route
-app.use(`/medicine`, MedicineRoute)
+app.use(`/medicine`, medicineRoute)
+app.use(`/admin`, adminRoute)
+
 const PORT = 1992
 app.listen(PORT, () => {
     console.log(`Server Drugstore run on port ${PORT}`);
     
+
 })

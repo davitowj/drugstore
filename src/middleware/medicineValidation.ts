@@ -1,5 +1,8 @@
 import { NextFunction, Request, Response } from "express"
 import Joi from "joi"
+import path from "path"
+import fs from "fs"
+import { ROOT_DIRECTORY } from "../config"
 
 // Create a ruke/schema for add new medicine
 const createScheme = Joi.object({
@@ -11,15 +14,25 @@ const createScheme = Joi.object({
 })
 
 const createValidation = (req: Request, res: Response, next: NextFunction) => {
-    const validate =  createScheme.validate(req.body)
+    const validate = createScheme.validate(req.body)
     if (validate.error) {
+        // delete currwnt uploaded file
+        let fileName = req.file?.filename || ``
+        let pathFile = path.join(ROOT_DIRECTORY, "public", "medicine-photo", fileName)
+        //apakah ada file yang akan dihapus
+        let fileExist = fs.existsSync(pathFile)
+
+        if (fileExist && fileName !== ``) {
+            // delete file
+            fs.unlinkSync(pathFile)
+        }
         // 400: Bad request
         return res.status(400).json({
             message: validate
-            .error
-            .details
-            .map(item => item.message)
-            .join()
+                .error
+                .details
+                .map(item => item.message)
+                .join()
         })
     }
     next()
@@ -35,18 +48,28 @@ const updateScheme = Joi.object({
 })
 
 const updateValidation = (req: Request, res: Response, next: NextFunction) => {
-    const validate =  updateScheme.validate(req.body)
+    const validate = updateScheme.validate(req.body)
     if (validate.error) {
+         // delete currwnt uploaded file
+         let fileName = req.file?.filename || ``
+         let pathFile = path.join(ROOT_DIRECTORY, "public", "medicine-photo", fileName)
+         //apakah ada file yang akan dihapus
+         let fileExist = fs.existsSync(pathFile)
+ 
+         if (fileExist && fileName !== ``) {
+             // delete file
+             fs.unlinkSync(pathFile)
+         }
         // 400: Bad request
         return res.status(400).json({
             message: validate
-            .error
-            .details
-            .map(item => item.message)
-            .join()
+                .error
+                .details
+                .map(item => item.message)
+                .join()
         })
     }
     next()
 }
 
-export{createValidation, updateValidation}
+export { createValidation, updateValidation }
